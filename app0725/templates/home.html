@@ -1,0 +1,101 @@
+{% load socialaccount %}
+{% providers_media_js %}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title>시온이의 맛집 추천</title>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=ase4pwr7kt"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-medium">
+        <a class="navbar-brand" href="#">시온이의 맛집 추천</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/accounts/signup">SignUp</a>
+            </li>
+            {%if user.is_authenticated%}
+            <li class="nav-item">
+              <a class="nav-link" href="/accounts/logout">로그아웃</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">{{user.username}}님이 로그인 중</a>
+            </li>
+            {% else %}
+            <li class="nav-item"></li>
+              <a class="nav-link" href="{% provider_login_url 'google' %}">Google Login</a><br>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">로그인 부탁드려요 :)</a>
+            </li>
+            {%endif%}
+          </ul>
+        </div>
+      </nav>
+
+<!--maps--LatLng내 숫자는 위도와 경도-->
+<div id="map" style="width:50%;height:400px;"></div>
+
+<script>
+var HOME_PATH = window.HOME_PATH || '.';
+
+var cityhall = new naver.maps.LatLng(37.5666805, 126.9784147),
+    map = new naver.maps.Map('map', {
+        center: cityhall.destinationPoint(0, 500),
+        zoom: 15
+    }),
+    marker = new naver.maps.Marker({
+        map: map,
+        position: cityhall
+    });
+
+var contentString = [
+        '<div class="iw_inner">',
+        '   <h3>서울특별시청</h3>',
+        '   <p>서울특별시 중구 태평로1가 31 | 서울특별시 중구 세종대로 110 서울특별시청<br />',
+        '       <img src="'+ HOME_PATH +'/img/example/hi-seoul.jpg" width="55" height="55" alt="서울시청" class="thumb" /><br />',
+        '       02-120 | 공공,사회기관 &gt; 특별,광역시청<br />',
+        '       <a href="http://www.seoul.go.kr" target="_blank">www.seoul.go.kr/</a>',
+        '   </p>',
+        '</div>'
+    ].join('');
+
+var infowindow = new naver.maps.InfoWindow({
+    content: contentString
+});
+
+naver.maps.Event.addListener(marker, "click", function(e) {
+    if (infowindow.getMap()) {
+        infowindow.close();
+    } else {
+        infowindow.open(map, marker);
+    }
+});
+
+infowindow.open(map, marker);
+</script>
+
+
+<!--썸네일-->
+{%for blog in blog.all%}
+<img src="{{blog.image.url}}" width=500><br>
+{{blog.text}}
+
+<br><br>
+<img src="{{blog.image_thumbnail.url}}" alt="thumbnail">
+{%endfor%}
+
+</body>
+</html>
