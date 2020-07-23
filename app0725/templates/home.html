@@ -90,12 +90,21 @@ infowindow.open(map, marker);
 
 <!--썸네일-->
 {%for blog in blog.all%}
-<img src="{{blog.image.url}}" width=500><br>
-{{blog.text}}
+{{blog.title}}
 
+<!--<img src="{{blog.image.url}}" width=500><br>-->
 <br><br>
 <img src="{{blog.image_thumbnail.url}}" alt="thumbnail">
+{{blog.text}}
+<br>
+<a href="{%url 'delete' blog.id%}">삭제</a>
+<a href="{%url 'update' blog.id%}">수정</a>
+<br><br>
 {%endfor%}
+
+<!--글쓰기-->
+<br><br>
+<a href="{%url 'create'%}">글쓰기</a>
 
 </body>
 </html>

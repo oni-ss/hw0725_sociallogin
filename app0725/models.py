@@ -5,11 +5,13 @@ from imagekit.processors import ResizeToFill
 class Blog(models.Model):
     text = models.TextField()
 
-    def __str__(self):
-        return self.title
 
 
 class Pictures(models.Model):
-    text=models.TextField()
+    title = models.CharField(max_length=100)
+    text = models.TextField()
     image = models.ImageField(upload_to="bloging")
     image_thumbnail = ImageSpecField(source='image', processors=[ResizeToFill(120,60)])
+
+    def __str__(self):
+        return self.title
