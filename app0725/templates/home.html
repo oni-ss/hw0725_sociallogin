@@ -1,10 +1,16 @@
+
 {% load socialaccount %}
 {% providers_media_js %}
 
 
 <!DOCTYPE html>
 <html>
+{%block contents%}
 <head>
+    <style>
+      @font-face { font-family: 'netmarbleB'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.1/netmarbleB.woff') format('woff'); font-weight: normal; font-style: normal; }
+      @font-face { font-family: 'netmarbleL'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.1/netmarbleL.woff') format('woff'); font-weight: normal; font-style: normal; }
+    </style>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
@@ -12,30 +18,32 @@
     <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=ase4pwr7kt"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
+
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-medium">
-        <a class="navbar-brand" href="#">시온이의 맛집 추천</a>
+        <a class="navbar-brand" href="{%url 'home'%}">시온이의 맛집 추천</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="{%url 'home'%}">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/accounts/signup">SignUp</a>
             </li>
             {%if user.is_authenticated%}
             <li class="nav-item">
-              <a class="nav-link" href="/accounts/logout">로그아웃</a>
+              <a class="nav-link" href="{%url 'account_logout'%}">Logout</a>
             </li>
             <li class="nav-item">
               <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">{{user.username}}님이 로그인 중</a>
             </li>
             {% else %}
             <li class="nav-item"></li>
-              <a class="nav-link" href="{% provider_login_url 'google' %}">Google Login</a><br>
+              <a class="nav-link" href="{%provider_login_url 'google'%}">Google Login</a><br>
             </li>
             <li class="nav-item">
               <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">로그인 부탁드려요 :)</a>
@@ -45,66 +53,86 @@
         </div>
       </nav>
 
-<!--maps--LatLng내 숫자는 위도와 경도-->
-<div id="map" style="width:50%;height:400px;"></div>
 
-<script>
-var HOME_PATH = window.HOME_PATH || '.';
 
-var cityhall = new naver.maps.LatLng(37.5666805, 126.9784147),
-    map = new naver.maps.Map('map', {
-        center: cityhall.destinationPoint(0, 500),
-        zoom: 15
-    }),
-    marker = new naver.maps.Marker({
-        map: map,
-        position: cityhall
+
+
+
+
+
+
+
+
+
+
+    <!--------------------------------------->
+<div class="container">
+    <!--maps--LatLng내 숫자는 위도와 경도-->
+    <div id="map" style="width:700px;height:300px; margin-left:200px;"></div>
+
+    <script>
+    var gl = new naver.maps.LatLng(37.630686,127.0707851),
+        map = new naver.maps.Map('map', {
+            center: gl.destinationPoint(0, 500),
+            zoom: 13
+        }),
+        marker = new naver.maps.Marker({
+            map: map,
+            position: gl
+        });
+
+    var contentString = [
+            '<div class="iw_inner">',
+            '   <h3 style="font-family: netmarbleB;"> 공릉동</h3>',
+            '   <p style="font-family: netmarbleL; font-size:13px;">서울특별시 노원구 공릉동</p>',
+            '   <p style="font-family: netmarbleL;">공릉역, 태릉입구역과 가까운 공릉의 경춘선 숲길에는 맛집이 많습니다.<br />',
+            '       공릉과 공릉 철길의 매력에 빠져보세요~!<br />',
+            '       <a style="font-size:14px;" href="https://search.naver.com/search.naver?sm=top_hty&fbm=0&ie=utf8&query=%EA%B3%B5%EB%A6%89+%EB%A7%9B%EC%A7%91" target="_blank">네이버에서 공릉맛집 검색하기!</a>',
+            '   </p>',
+            '</div>'
+        ].join('');
+
+    var infowindow = new naver.maps.InfoWindow({
+        content: contentString
     });
 
-var contentString = [
-        '<div class="iw_inner">',
-        '   <h3>서울특별시청</h3>',
-        '   <p>서울특별시 중구 태평로1가 31 | 서울특별시 중구 세종대로 110 서울특별시청<br />',
-        '       <img src="'+ HOME_PATH +'/img/example/hi-seoul.jpg" width="55" height="55" alt="서울시청" class="thumb" /><br />',
-        '       02-120 | 공공,사회기관 &gt; 특별,광역시청<br />',
-        '       <a href="http://www.seoul.go.kr" target="_blank">www.seoul.go.kr/</a>',
-        '   </p>',
-        '</div>'
-    ].join('');
+    naver.maps.Event.addListener(marker, "click", function(e) {
+        if (infowindow.getMap()) {
+            infowindow.close();
+        } else {
+            infowindow.open(map, marker);
+        }
+    });
 
-var infowindow = new naver.maps.InfoWindow({
-    content: contentString
-});
-
-naver.maps.Event.addListener(marker, "click", function(e) {
-    if (infowindow.getMap()) {
-        infowindow.close();
-    } else {
-        infowindow.open(map, marker);
-    }
-});
-
-infowindow.open(map, marker);
-</script>
+    infowindow.open(map, marker);
+    </script>
+</div>
 
 
 <!--썸네일-->
-{%for blog in blog.all%}
-{{blog.title}}
-
-<!--<img src="{{blog.image.url}}" width=500><br>-->
-<br><br>
-<img src="{{blog.image_thumbnail.url}}" alt="thumbnail">
-{{blog.text}}
-<br>
-<a href="{%url 'delete' blog.id%}">삭제</a>
-<a href="{%url 'update' blog.id%}">수정</a>
-<br><br>
-{%endfor%}
-
-<!--글쓰기-->
-<br><br>
-<a href="{%url 'create'%}">글쓰기</a>
+<div class="album py-5 bg-light">
+  <div class="container">
+      <div class="row">
+        {%for blog in blog.all%}
+        <!--------------------------------->
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <img class="card-img-top" src="{{blog.image_thumbnail.url}}" alt="thumbnail">
+            <div class="card-body">
+              <a href="{%url 'detail' blog.id%}"><h4 style="font-family: 'netmarbleB'; color:black;">{{blog.title}}</h4></a>
+              <hr><p class="card-text" style="font-family: 'netmarbleL';">{{blog.summary|linebreaksbr}}<br>...</p>
+              <a href="{%url 'update' blog.id%}">수정</a>
+              <a href="{%url 'delete' blog.id%}">삭제</a>
+          </div>
+          </div>
+      </div>
+      {% endfor %}
+</div>
+<a href="{%url 'create'%}"><button type="button" class="btn btn-light" style="font-family: 'netmarbleL'; border:medium solid #dbe2c7;">나도 공릉 맛집 추천하기</button></a>
+</div>
+</div>
+<!-------------------------->
 
 </body>
+{%endblock%}
 </html>

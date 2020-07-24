@@ -45,7 +45,6 @@ AUTHENTICATION_BACKENDS = (
 )
 
 SITE_ID = 1
-
 LOGIN_REDIRECT_URL = '/'
 ###
 
@@ -64,7 +63,7 @@ ROOT_URLCONF = 'pj0725.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['pj0725/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
